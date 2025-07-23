@@ -17,7 +17,7 @@ namespace Core
         private void LateUpdate()
         {
             Debug.DrawLine(_movement.Position, _movement.Position + _movement.Velocity, Color.green);
-            Debug.DrawLine(_movement.Position, _movement.Position + _movement.Direction, Color.blue);
+            Debug.DrawLine(_movement.Position, _movement.Position + _movement.MoveDirection, Color.blue);
         }
     }
 }
