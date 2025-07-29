@@ -19,11 +19,11 @@ namespace UI
         }
 
         [Inject]
-        public void Construct(SpaceshipMovement movement)
+        public void Construct(SpaceshipPhysics physics)
         {
-            movement.VelocityChanged += UpdateVelocity;
-            movement.AngleChanged += UpdateAngle;
-            movement.PositionChanged += UpdatePosition;
+            physics.VelocityChanged += UpdateVelocity;
+            physics.AngleChanged += UpdateAngle;
+            physics.PositionChanged += UpdatePosition;
         }
 
         private void UpdateVelocity(float velocity)

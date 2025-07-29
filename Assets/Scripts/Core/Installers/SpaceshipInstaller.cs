@@ -5,7 +5,7 @@ public class SpaceshipInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
-        Container.Bind<SpaceshipMovement>().AsSingle();
+        Container.Bind<SpaceshipPhysics>().AsSingle();
         Container.Bind<SpaceshipInput>().AsSingle();
         Container.Bind<SpaceshipPresentation>().AsSingle();
     }

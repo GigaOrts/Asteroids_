@@ -1,35 +1,45 @@
 using System;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Core
 {
-    public class SpaceshipPresentation : MonoBehaviour
+    public class AsteroidPresentation : MonoBehaviour
     {
+        private AsteroidPhysics _physics;
         private Transform _transform;
-        private SpaceshipPhysics _physics;
-        private SpaceshipInput _input;
         private Camera _camera;
 
         [Inject]
-        public void Construct(SpaceshipPhysics physics, SpaceshipInput input)
+        public void Construct(AsteroidPhysics physics)
         {
             _physics = physics;
-            _input = input;
         }
 
         private void Start()
         {
             _camera = Camera.main;
-
             _transform = GetComponent<Transform>();
+            
+            _physics.Angle = Random.Range(0, 360);
+            _physics.Rotation = Quaternion.Euler(0, 0, _physics.Angle);
+            _physics.MoveDirection = (_physics.Rotation * Vector2.up).normalized;
+            
+            _physics.Speed_Velocity = 3;
+            _physics.Position = 
+                new Vector2(
+                    Random.Range(-_camera.orthographicSize, _camera.orthographicSize), 
+                    Random.Range(-_camera.orthographicSize, _camera.orthographicSize));
+            
+            Debug.Log($"Initialized Asteroid Position: {_physics.Position}");
         }
 
         private void Update()
         {
             TeleportNearBorder();
-            Move();
-            Rotate();
+            
+            _physics.Accelerate(Time.deltaTime);
 
             _physics.Update(Time.deltaTime);
 
@@ -56,44 +66,10 @@ namespace Core
                 _physics.Position = new Vector3(_camera.orthographicSize, _physics.Position.y);
             }
         }
-
-        private void Move()
-        {
-            if (_input.AccelerationHold)
-            {
-                _physics.Accelerate(Time.deltaTime);
-                _physics.RotateDeceleration(Time.deltaTime);
-            }
-            else if (_input.BrakeHold)
-            {
-                _physics.Brake();
-                _physics.RotateDeceleration(Time.deltaTime);
-            }
-            else if (_input.AccelerationHold == false)
-            {
-                _physics.Decelerate(Time.deltaTime);
-            }
-        }
-
-        private void Rotate()
-        {
-            if (_input.RotationRightHold)
-            {
-                _physics.RotateAccelerationRight(Time.deltaTime);
-            }
-            else if (_input.RotationLeftHold)
-            {
-                _physics.RotateAccelerationLeft(Time.deltaTime);
-            }
-            else
-            {
-                _physics.RotateDeceleration(Time.deltaTime);
-            }
-        }
-
-
+        
         private void OnCollisionEnter2D(Collision2D other)
         {
+            Debug.Log($"{gameObject.name} - Collision");
             _physics.OnCollision(other);
         }
     }
