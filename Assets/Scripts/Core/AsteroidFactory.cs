@@ -1,14 +1,22 @@
+using System;
 using UnityEngine;
 
 namespace Core
 {
-    public class AsteroidFactory
+    public class AsteroidFactory : MonoBehaviour
     {
+        public AsteroidPresentation asteroidPresentationPrefab;
+        
+        private void Start()
+        {
+            Create();
+        }
+
         public void Create()
         {
-            // Vector2 position = Vector2.one;
-            // Quaternion rotation = Quaternion.Euler(0,0,Random.Range(0,360));
-            // var asteroid = new AsteroidPhysics(position, rotation);
+            var position = Vector3.one;
+            var rotation = Quaternion.identity;
+            Instantiate(asteroidPresentationPrefab, position, rotation);
         }
     }
 }

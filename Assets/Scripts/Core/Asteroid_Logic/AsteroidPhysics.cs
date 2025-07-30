@@ -5,16 +5,10 @@ namespace Core
 {
     public class AsteroidPhysics
     {
-        public float SmoothRotationTime = 0.11f;
-        public Vector2 SmoothRotationVelocity;
-        
         public float Speed_Velocity;
         public float MaxSpeed_Velocity = 2.5f;
 
         public float Acceleration_Velocity;
-
-        public float RotationSpeed;
-        
         public float Angle;
         
         public Vector2 Position;
@@ -25,17 +19,12 @@ namespace Core
 
         public bool CanMove;
 
-        public event Action<float> VelocityChanged;
-        public event Action<Vector2> PositionChanged;
-        public event Action<float> AngleChanged;
-
         public AsteroidPhysics()
         {
             Velocity = Vector2.up;
             MoveDirection = Vector2.up;
             Rotation = Quaternion.identity;
             Speed_Velocity = 0;
-            RotationSpeed = 0;
             Angle = 0;
             
             Acceleration_Velocity = MaxSpeed_Velocity * 0.5f;
@@ -43,11 +32,10 @@ namespace Core
         }
 
         private float canMoveTimer;
-        private float canMoveDuration = 2;
+        private float canMoveDuration = 0.5f;
 
         public void Update(float dt)
         {
-            UpdateRotation(dt);
             UpdatePosition(dt);
 
             LockMovementCountdown(dt);
@@ -72,36 +60,14 @@ namespace Core
             if (!CanMove)
                 return;
             
-            if (Vector2.Dot(Velocity, MoveDirection) < -0.8)
-            {
-                SmoothRotationTime = 0.05f;
-            }
-            else
-            {
-                SmoothRotationTime = 0.11f;
-            }
-            
             Speed_Velocity = Mathf.Min(Speed_Velocity + Acceleration_Velocity * dt, MaxSpeed_Velocity);
 
             Velocity = MoveDirection * Speed_Velocity;
-            
-            VelocityChanged?.Invoke(Velocity.magnitude);
-        }
-
-        private void UpdateRotation(float dt)
-        {
-            
-            // TODO: Make between -180 to 180. Not 0 to 360
-            
-            
-            AngleChanged?.Invoke(Rotation.eulerAngles.z);
         }
 
         private void UpdatePosition(float dt)
         {
             Position += Velocity * dt;
-            
-            PositionChanged?.Invoke(Position);
         }
 
         public void OnCollision(Collision2D other)
@@ -111,7 +77,7 @@ namespace Core
             
             Vector2 pushDirection = (Position - (Vector2)other.transform.position).normalized;
             
-            var pushFactor = 2f;
+            var pushFactor = 0.5f;
             // TODO if u stay, Speed is 0, so u dont move on bump
             Velocity += pushDirection * Speed_Velocity * pushFactor;
             
@@ -122,7 +88,6 @@ namespace Core
                 Velocity = Velocity.normalized * MaxSpeed_Velocity;
             }
 
-            VelocityChanged?.Invoke(Velocity.magnitude);
             CanMove = false;
         }
     }

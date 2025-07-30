@@ -1,16 +1,17 @@
+using System;
 using UnityEngine;
 using Zenject;
 
 namespace Core
 {
+    [RequireComponent(typeof(AsteroidPresentation))]
     public class AsteroidGizmos : MonoBehaviour
     {
         private AsteroidPhysics _physics;
-        
-        [Inject]
-        public void Construct(AsteroidPhysics physics)
+
+        private void Awake()
         {
-            _physics = physics;
+            _physics = GetComponent<AsteroidPresentation>().Physics;
         }
 
         private void LateUpdate()

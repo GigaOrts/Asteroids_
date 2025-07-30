@@ -7,14 +7,15 @@ namespace Core
 {
     public class AsteroidPresentation : MonoBehaviour
     {
-        private AsteroidPhysics _physics;
         private Transform _transform;
         private Camera _camera;
+
+        public AsteroidPhysics Physics { get; private set; }
 
         [Inject]
         public void Construct(AsteroidPhysics physics)
         {
-            _physics = physics;
+            Physics = physics;
         }
 
         private void Start()
@@ -22,55 +23,55 @@ namespace Core
             _camera = Camera.main;
             _transform = GetComponent<Transform>();
             
-            _physics.Angle = Random.Range(0, 360);
-            _physics.Rotation = Quaternion.Euler(0, 0, _physics.Angle);
-            _physics.MoveDirection = (_physics.Rotation * Vector2.up).normalized;
+            Physics.Angle = Random.Range(0, 360);
+            Physics.Rotation = Quaternion.Euler(0, 0, Physics.Angle);
+            Physics.MoveDirection = (Physics.Rotation * Vector2.up).normalized;
             
-            _physics.Speed_Velocity = 3;
-            _physics.Position = 
+            Physics.Speed_Velocity = 3;
+            Physics.Position = 
                 new Vector2(
                     Random.Range(-_camera.orthographicSize, _camera.orthographicSize), 
                     Random.Range(-_camera.orthographicSize, _camera.orthographicSize));
             
-            Debug.Log($"Initialized Asteroid Position: {_physics.Position}");
+            Debug.Log($"Initialized Asteroid Position: {Physics.Position}");
         }
 
         private void Update()
         {
             TeleportNearBorder();
             
-            _physics.Accelerate(Time.deltaTime);
+            Physics.Accelerate(Time.deltaTime);
 
-            _physics.Update(Time.deltaTime);
+            Physics.Update(Time.deltaTime);
 
-            _transform.position = _physics.Position;
-            _transform.rotation = _physics.Rotation;
+            _transform.position = Physics.Position;
+            _transform.rotation = Physics.Rotation;
         }
 
         private void TeleportNearBorder()
         {
             if (_transform.position.y > _camera.orthographicSize)
             {
-                _physics.Position = new Vector3(_physics.Position.x, -_camera.orthographicSize);
+                Physics.Position = new Vector3(Physics.Position.x, -_camera.orthographicSize);
             }
             else if (_transform.position.x > _camera.orthographicSize)
             {
-                _physics.Position = new Vector3(-_camera.orthographicSize, _physics.Position.y);
+                Physics.Position = new Vector3(-_camera.orthographicSize, Physics.Position.y);
             }
             else if (_transform.position.y < -_camera.orthographicSize)
             {
-                _physics.Position = new Vector3(_physics.Position.x, _camera.orthographicSize);
+                Physics.Position = new Vector3(Physics.Position.x, _camera.orthographicSize);
             }
             else if (_transform.position.x < -_camera.orthographicSize)
             {
-                _physics.Position = new Vector3(_camera.orthographicSize, _physics.Position.y);
+                Physics.Position = new Vector3(_camera.orthographicSize, Physics.Position.y);
             }
         }
         
         private void OnCollisionEnter2D(Collision2D other)
         {
             Debug.Log($"{gameObject.name} - Collision");
-            _physics.OnCollision(other);
+            Physics.OnCollision(other);
         }
     }
 }
