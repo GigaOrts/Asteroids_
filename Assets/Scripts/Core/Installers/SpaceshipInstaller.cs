@@ -7,6 +7,7 @@ public class SpaceshipInstaller : MonoInstaller
     {
         Container.Bind<SpaceshipPhysics>().AsSingle();
         Container.Bind<SpaceshipInput>().AsSingle();
+        Container.Bind<SpaceshipHealth>().AsSingle();
         Container.Bind<SpaceshipPresentation>().AsSingle();
     }
 }

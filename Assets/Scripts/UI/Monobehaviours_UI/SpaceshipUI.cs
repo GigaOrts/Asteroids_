@@ -12,18 +12,31 @@ namespace UI
         public TextMeshProUGUI SpaceshipSpeedText;
         public TextMeshProUGUI SpaceshipAngleText;
         public TextMeshProUGUI SpaceshipPositionText;
+        public TextMeshProUGUI SpaceshipHealthText;
 
         private void Awake()
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
         }
 
+        private void Start()
+        {
+            UpdateHealth(3);
+        }
+
         [Inject]
-        public void Construct(SpaceshipPhysics physics)
+        public void Construct(SpaceshipPhysics physics, SpaceshipHealth health)
         {
             physics.VelocityChanged += UpdateVelocity;
             physics.AngleChanged += UpdateAngle;
             physics.PositionChanged += UpdatePosition;
+
+            health.HealthChanged += UpdateHealth;
+        }
+
+        private void UpdateHealth(int health)
+        {
+            SpaceshipHealthText.text = $"HEALTH: {health}";
         }
 
         private void UpdateVelocity(float velocity)

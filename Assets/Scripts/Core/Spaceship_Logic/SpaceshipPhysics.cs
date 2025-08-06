@@ -28,7 +28,8 @@ namespace Core
         
         public Quaternion Rotation;
 
-        public bool CanMove;
+        public bool CanAccelerate;
+        public bool IsInvincible;
 
         public event Action<float> VelocityChanged;
         public event Action<Vector2> PositionChanged;
@@ -51,7 +52,7 @@ namespace Core
             RotationDeceleration = MaxRotationSpeed * 0.3f;
 
             BrakeSpeed = MaxSpeed_Velocity * 0.01f;
-            CanMove = true;
+            CanAccelerate = true;
         }
 
         private float canMoveTimer;
@@ -67,21 +68,22 @@ namespace Core
 
         private void LockMovementCountdown(float dt)
         {
-            if (!CanMove)
+            if (!CanAccelerate)
             {
                 canMoveTimer += dt;
 
                 if (canMoveTimer >= canMoveDuration)
                 {
                     canMoveTimer = 0;
-                    CanMove = true;
+                    CanAccelerate = true;
+                    IsInvincible = false;
                 }
             }
         }
 
         public void Accelerate(float dt)
         {
-            if (!CanMove)
+            if (!CanAccelerate)
                 return;
             
             if (Vector2.Dot(Velocity, MoveDirection) < -0.8)
@@ -169,7 +171,7 @@ namespace Core
 
         public void OnCollision(Collision2D other)
         {
-            if (!CanMove)
+            if (!CanAccelerate || IsInvincible)
                 return;
             
             Debug.Log("Collision");
@@ -184,7 +186,8 @@ namespace Core
             }
 
             VelocityChanged?.Invoke(Velocity.magnitude);
-            CanMove = false;
+            CanAccelerate = false;
+            IsInvincible = true;
         }
     }
 }

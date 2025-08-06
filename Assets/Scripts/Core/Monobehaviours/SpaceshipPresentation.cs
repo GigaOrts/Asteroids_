@@ -9,13 +9,15 @@ namespace Core
         private Transform _transform;
         private SpaceshipPhysics _physics;
         private SpaceshipInput _input;
+        private SpaceshipHealth _health;
         private Camera _camera;
 
         [Inject]
-        public void Construct(SpaceshipPhysics physics, SpaceshipInput input)
+        public void Construct(SpaceshipPhysics physics, SpaceshipInput input, SpaceshipHealth health)
         {
             _physics = physics;
             _input = input;
+            _health = health;
         }
 
         private void Start()
@@ -95,6 +97,7 @@ namespace Core
         private void OnCollisionEnter2D(Collision2D other)
         {
             _physics.OnCollision(other);
+            _health.TakeDamage();
         }
     }
 }

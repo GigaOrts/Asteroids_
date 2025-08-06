@@ -11,11 +11,12 @@ namespace Core
         private Camera _camera;
 
         public AsteroidPhysics Physics { get; private set; }
+        public AsteroidHealth Health { get; private set; }
 
-        [Inject]
-        public void Construct(AsteroidPhysics physics)
+        private void Awake()
         {
-            Physics = physics;
+            Physics = new AsteroidPhysics();
+            Health = new AsteroidHealth();
         }
 
         private void Start()
